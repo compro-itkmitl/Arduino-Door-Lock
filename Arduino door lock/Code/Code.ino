@@ -1,4 +1,5 @@
 #include <Keypad.h> 
+#include <LiquidCrystal_I2C.h>
 
 const byte rows = 4;
 const byte columns = 4;
