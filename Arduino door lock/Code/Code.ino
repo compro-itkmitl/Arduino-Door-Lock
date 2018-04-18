@@ -1,5 +1,12 @@
 #include <Keypad.h> 
 #include <LiquidCrystal_I2C.h>
+#include <Servo.h>
+
+#define servo_lock 1
+#define servo_unlock 180
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+Servo servo;
 
 const byte rows = 4;
 const byte columns = 4;
