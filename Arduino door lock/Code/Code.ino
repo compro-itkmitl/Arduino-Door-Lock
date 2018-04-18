@@ -6,6 +6,8 @@
 #define servo_unlock 180
 
 int check = 0;
+char factory_password[] = {48, 48, 48, 48, 48, 48};
+char password[6];
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo servo;
@@ -47,7 +49,7 @@ void loop(){
   if(input_key == '#'){
     change_password();
   }
-  if(input_key) {
+  if(input_key){
     password[i++] = input_key;
     lcd.setCursor(i, 1);
     lcd.print("*");
@@ -65,11 +67,6 @@ void loop(){
       check = 1;
       i = 0;
     }
-    else if(check = 0){
-      if(strcmp(password, factory_password) == 0){
-        change_password();
-      }
-    }
     else{
       lcd.clear();
       lcd.print("Wrong Password");
@@ -78,16 +75,64 @@ void loop(){
       lcd.print("Enter Password");
       lcd.setCursor(0, 1);
       i = 0;
-    }
+   }
   }
-    
-  }
-}
- 
-void check_password(){
-  
+ }
 }
 
+void change_password(){
+  int i = 0, j = 0;
+  lcd.clear();
+  lcd.print("Factory Password");
+  lcd.setCursor(0, 1);
+  char input_key = keypad1.getKey();
+  if(input_key){
+    password[i++] = input_key;
+    lcd.setCursor(i, 1);
+    lcd.print("*");
+  }
+  if(strcmp(password, factory_password) == 0){
+    lcd.clear();
+    lcd.print("Set New Password");
+    lcd.setCursor(0, 1);
+    for(j; j < 6; j++){
+      char input_key = keypad1.getKey();
+      if(input_key){
+        lcd.print("*");
+        EEPROM.write(j, input_key);
+        lcd.clear();
+        lcd.print("Password changed");
+      }
+    }
+  }
+  else{
+    lcd.clear();
+    lcd.print("Wrong factory Password");
+  }
+  lcd.clear();
+  lcd.print("Enter Password");
+  lcd.setCursor(0, 1);
+}
+
+void factoryWrite() {  //777777
+  EEPROM.write(0, 55);
+  EEPROM.write(1, 55);
+  EEPROM.write(2, 55);
+  EEPROM.write(3, 55);
+  EEPROM.write(4, 55);
+  EEPROM.write(5, 55);
+  EEPROM.write(6, 55);
+}
+
+void factoryRead() {  //777777
+  fctpass[0] = EEPROM.read(0);
+  fctpass[1] = EEPROM.read(1);
+  fctpass[2] = EEPROM.read(2);
+  fctpass[3] = EEPROM.read(3);
+  fctpass[4] = EEPROM.read(4);
+  fctpass[5] = EEPROM.read(5);
+  fctpass[6] = EEPROM.read(6);
+}
 
 void lock(){
   servo.write(servo_lock);
