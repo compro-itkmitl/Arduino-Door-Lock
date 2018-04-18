@@ -1,6 +1,7 @@
 #include <Keypad.h> 
 #include <LiquidCrystal_I2C.h>
 #include <Servo.h>
+#include <EEPROM.h>
 
 #define servo_lock 1
 #define servo_unlock 180
@@ -55,7 +56,7 @@ void loop(){
     lcd.print("*");
   }
   if(i == 6){
-    for(int i = 0; i < 6; i++){
+    for(int j = 0; j < 6; j++){
       present_password[i] = EEPROM.read(i);
     }
     if(strcmp(password, present_password) == 0){
