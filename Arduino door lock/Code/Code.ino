@@ -6,10 +6,10 @@
 #define servo_lock 1
 #define servo_unlock 180
 
-int check = 0;
+int i = 0;
 char factory_password[] = {48, 48, 48, 48, 48, 48};
 char password[6];
-char present_password[6];
+char present_password[6]
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo servo;
@@ -44,7 +44,7 @@ void setup(){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Enter Password");
-
+}
 void loop(){
   lock();
   input_key = keypad1.getKey();
@@ -58,14 +58,14 @@ void loop(){
   }
   if(i == 6){
     for(int j = 0; j < 6; j++){
-      present_password[j] = EEPROM.read(j);
+      present_password[i] = EEPROM.read(i);
     }
     if(strcmp(password, present_password) == 0){
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Pass Accepted");
       unlock();
-      delay(8000);
+      delay(7000);
       check = 1;
       i = 0;
     }
