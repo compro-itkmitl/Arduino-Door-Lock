@@ -9,6 +9,7 @@
 int check = 0;
 char factory_password[] = {48, 48, 48, 48, 48, 48};
 char password[6];
+char present_password[6];
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo servo;
@@ -57,14 +58,14 @@ void loop(){
   }
   if(i == 6){
     for(int j = 0; j < 6; j++){
-      present_password[i] = EEPROM.read(i);
+      present_password[j] = EEPROM.read(j);
     }
     if(strcmp(password, present_password) == 0){
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Pass Accepted");
       unlock();
-      delay(7000);
+      delay(8000);
       check = 1;
       i = 0;
     }
@@ -87,7 +88,7 @@ void change_password(){
   lcd.print("Factory Password");
   lcd.setCursor(0, 1);
   char input_key = keypad1.getKey();
-  if(input_key){
+  for(i; i < 6; i++){
     password[i++] = input_key;
     lcd.setCursor(i, 1);
     lcd.print("*");
