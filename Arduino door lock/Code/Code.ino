@@ -6,13 +6,18 @@
 #define servo_lock 1
 #define servo_unlock 180
 
-int i = 0;
-char factory_password[] = {48, 48, 48, 48, 48, 48};
-char password[6];
-char present_password[6]
-
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo servo;
+
+
+int i = 0, j = 0;
+char factory_password[] = {48, 48, 48, 48, 48, 48};
+char password[6];
+char present_password[6];
+char input_key = 0;
+char new_password[6];
+
+
 
 const byte rows = 4;
 const byte columns = 4;
@@ -29,9 +34,10 @@ byte column_pins[columns] = {5, 4, 3, 2};
 
 Keypad keypad_key = Keypad( makeKeymap(hexaKeys), row_pins, column_pins, rows, columns);
 
+
 void setup(){
   Serial.begin(9600);
-  servo.attach(13);
+  servo.attach(12);
   lcd.begin();
   lcd.setCursor(0, 0);
   lcd.print("    Welcome");
@@ -44,102 +50,94 @@ void setup(){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Enter Password");
+  lcd.setCursor(0, 1);
+  for (int j = 0; j < 4; j++){
+      EEPROM.write(j, 55);
+  }
+  for (int j = 0; j < 4; j++){
+      present_password[j] = EEPROM.read(j);
+  }
+  j = 0;
 }
+void lock(){
+  servo.write(servo_lock);
+}
+void unlock(){
+  servo.write(servo_unlock);
+}
+
+
 void loop(){
   lock();
-  input_key = keypad1.getKey();
-  if(input_key == '#'){
-    change_password();
-  }
-  if(input_key){
+  input_key = keypad_key.getKey();
+  if (input_key) {
     password[i++] = input_key;
-    lcd.setCursor(i, 1);
-    lcd.print("*");
+    lcd.setCursor(i-1, 1);
+    lcd.print(input_key);
   }
-  if(i == 6){
-    for(int j = 0; j < 6; j++){
-      present_password[i] = EEPROM.read(i);
-    }
-    if(strcmp(password, present_password) == 0){
+  if (i == 4) {
+    delay(200);
+    if (!(strncmp(password, present_password, 4)))
+    {
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Pass Accepted");
       unlock();
-      delay(7000);
-      check = 1;
-      i = 0;
-    }
-    else{
-      lcd.clear();
-      lcd.print("Wrong Password");
+      delay(5000);
+      lcd.setCursor(0, 1);
+      lcd.print("Pres # to change");
       delay(2000);
       lcd.clear();
-      lcd.print("Enter Password");
+      lcd.print("Enter Password:");
       lcd.setCursor(0, 1);
       i = 0;
+    }
+    else if (!(strncmp(password, factory_password, 4)))
+    {
+      int j = 0;
+      lcd.clear();
+      lcd.print("Factory Password");
+      delay(2000);
+      lcd.clear();
+      lcd.print("New password");
+      lcd.setCursor(0, 1);
+      while( j < 4){
+        char input_key = keypad_key.getKey();
+        if (input_key) {
+            lcd.print(input_key);
+            EEPROM.write(j, input_key);
+            j++;
+        }
+      }
+      for (int j = 0; j < 4; j++){
+        present_password[j] = EEPROM.read(j);
+      }
+      delay(1000);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("pass change");
+      delay(1000);
+      lcd.clear();
+      lcd.print("enter password");
+      lcd.setCursor(0, 1);
+      i = 0;
+    }
+  
+    else {
+     lock();
+     lcd.clear();
+     lcd.print("Wrong Password");
+     delay(2000);
+     lcd.clear();
+     lcd.print("Enter Password");
+     lcd.setCursor(0, 1);
+     i = 0;
    }
   }
- }
 }
 
-void change_password(){
-  int i = 0, j = 0;
-  lcd.clear();
-  lcd.print("Factory Password");
-  lcd.setCursor(0, 1);
-  char input_key = keypad1.getKey();
-  for(i; i < 6; i++){
-    password[i++] = input_key;
-    lcd.setCursor(i, 1);
-    lcd.print("*");
-  }
-  if(strcmp(password, factory_password) == 0){
-    lcd.clear();
-    lcd.print("Set New Password");
-    lcd.setCursor(0, 1);
-    for(j; j < 6; j++){
-      char input_key = keypad1.getKey();
-      if(input_key){
-        lcd.print("*");
-        EEPROM.write(j, input_key);
-        lcd.clear();
-        lcd.print("Password changed");
-      }
-    }
-  }
-  else{
-    lcd.clear();
-    lcd.print("Wrong factory Password");
-  }
-  lcd.clear();
-  lcd.print("Enter Password");
-  lcd.setCursor(0, 1);
-}
 
-void factoryWrite() {  //777777
-  EEPROM.write(0, 55);
-  EEPROM.write(1, 55);
-  EEPROM.write(2, 55);
-  EEPROM.write(3, 55);
-  EEPROM.write(4, 55);
-  EEPROM.write(5, 55);
-  EEPROM.write(6, 55);
-}
 
-void factoryRead() {  //777777
-  fctpass[0] = EEPROM.read(0);
-  fctpass[1] = EEPROM.read(1);
-  fctpass[2] = EEPROM.read(2);
-  fctpass[3] = EEPROM.read(3);
-  fctpass[4] = EEPROM.read(4);
-  fctpass[5] = EEPROM.read(5);
-  fctpass[6] = EEPROM.read(6);
-}
 
-void lock(){
-  servo.write(servo_lock);
-}
 
-void unlock(){
-  servo.write(servo_unlock);
-}
+
