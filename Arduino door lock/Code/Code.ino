@@ -10,7 +10,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo servo;
 
 
-int i = 0, j = 0, check = 0, check1 = 0;
+int i = 0, j = 0, wpcount = 0, wptcount = 0; //wpcount = wrong password count, wpt = wrong password time count
 char factory_password[] = {65, 48, 66, 48, 67, 48};
 char password[6];
 char present_password[6];
@@ -61,7 +61,7 @@ void setup(){
 
 void loop(){
   lock();
-  if(check < 3){
+  if(wpcount < 3){
     input_key = keypad_key.getKey();
     if (input_key) {
       password[i++] = input_key;
@@ -77,8 +77,8 @@ void loop(){
         lcd.print("Pass Accepted");
         unlock();
         delay(5000);
-        check1 = 0;
-        check = 0;
+        wptcount = 0;
+        wpcount = 0;
         lcd.clear();
         lcd.setCursor(1, 0);
         lcd.print("Enter Password");
@@ -91,10 +91,12 @@ void loop(){
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Factory Password");
+        lcd.setCursor(4, 1);
+        lcd.print("Accepted");
         delay(2000);
         lcd.clear();
-        lcd.setCursor(2, 0);
-        lcd.print("New Password");
+        lcd.setCursor(0, 0);
+        lcd.print("Set New Password");
         lcd.setCursor(5, 1);
         while( j < 6){
           char input_key = keypad_key.getKey();
@@ -109,8 +111,8 @@ void loop(){
         }
         delay(1000);
         lcd.clear();
-        lcd.setCursor(2, 0);
-        lcd.print("Pass Change");
+        lcd.setCursor(0, 0);
+        lcd.print("Password Changed");
         delay(2000);
         lcd.clear();
         lcd.setCursor(1, 0);
@@ -130,12 +132,12 @@ void loop(){
       lcd.print("Enter Password");
       lcd.setCursor(5, 1);
       i = 0;
-      check++;
+      wpcount++;
       }
     }
   }
   else{
-    int count = 5000+check1*1000;
+    int count = 5000+wptcount*1000;
     lcd.clear();
     lcd.setCursor(5, 0);
     lcd.print("Locked");
@@ -143,13 +145,13 @@ void loop(){
     lcd.print("Seconds:");
     lcd.setCursor(9, 1);
     lcd.print(count/1000);
-    delay(5000+check1*1000);
-    check = 0;
+    delay(5000+wptcount*1000);
+    wpcount = 0;
     lcd.clear();
     lcd.setCursor(1, 0);
     lcd.print("Enter Password");
     lcd.setCursor(5, 1);
-    check1++;
+    wptcount++;
   }
 }
 void lock(){
