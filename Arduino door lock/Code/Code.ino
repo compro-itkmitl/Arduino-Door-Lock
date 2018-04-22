@@ -11,7 +11,7 @@ Servo servo;
 
 
 int i = 0, j = 0;
-char factory_password[] = {48, 48, 48, 48, 48, 48};
+char factory_password[] = {65, 48, 66, 48, 67, 48};
 char password[6];
 char present_password[6];
 char input_key = 0;
@@ -51,19 +51,11 @@ void setup(){
   lcd.setCursor(0, 0);
   lcd.print("Enter Password");
   lcd.setCursor(0, 1);
-  for (int j = 0; j < 4; j++){
-      EEPROM.write(j, 55);
-  }
-  for (int j = 0; j < 4; j++){
+  
+  for (int j = 0; j < 6; j++){
       present_password[j] = EEPROM.read(j);
   }
   j = 0;
-}
-void lock(){
-  servo.write(servo_lock);
-}
-void unlock(){
-  servo.write(servo_unlock);
 }
 
 
@@ -75,24 +67,21 @@ void loop(){
     lcd.setCursor(i-1, 1);
     lcd.print(input_key);
   }
-  if (i == 4) {
+  if (i == 6) {
     delay(200);
-    if (!(strncmp(password, present_password, 4)))
+    if (!(strncmp(password, present_password, 6)))
     {
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Pass Accepted");
       unlock();
       delay(5000);
-      lcd.setCursor(0, 1);
-      lcd.print("Pres # to change");
-      delay(2000);
       lcd.clear();
-      lcd.print("Enter Password:");
+      lcd.print("Enter Password");
       lcd.setCursor(0, 1);
       i = 0;
     }
-    else if (!(strncmp(password, factory_password, 4)))
+    else if (!(strncmp(password, factory_password, 6)))
     {
       int j = 0;
       lcd.clear();
@@ -101,7 +90,7 @@ void loop(){
       lcd.clear();
       lcd.print("New password");
       lcd.setCursor(0, 1);
-      while( j < 4){
+      while( j < 6){
         char input_key = keypad_key.getKey();
         if (input_key) {
             lcd.print(input_key);
@@ -109,7 +98,7 @@ void loop(){
             j++;
         }
       }
-      for (int j = 0; j < 4; j++){
+      for (int j = 0; j < 6; j++){
         present_password[j] = EEPROM.read(j);
       }
       delay(1000);
@@ -134,5 +123,12 @@ void loop(){
      i = 0;
    }
   }
+}
+
+void lock(){
+  servo.write(servo_lock);
+}
+void unlock(){
+  servo.write(servo_unlock);
 }
 
