@@ -1,17 +1,17 @@
-# Arduino Door Lock Project ![Minion](http://downloadicons.net/sites/default/files/locked-icon-28008.png =60x60)
+# Arduino Door Lock Project !
 
-## วัตถุประสงค์ของโปรเจคของเรา:
+## Our Project Objective:
 
     โปรเจคของเราจัดทำขึ้นเพื่อการประยุกต์ใช้ Arduino Board ในการทำการปลดล็อคประตูด้วยรหัสผ่านเพื่อให้เกิดความทันสมัย และมีความปลอดภัยในการล็อคประตูมากขึ้น
      
-## Hardware ของโปรเจค Arduino Door Lock:
+## Hardware of Arduino Door Lock Project:
 
     1. Arduino Board UNO
     2. LCD (16*2)
     3. Servo Motor
     4. Breadboard
      
-## Function ของโปรเจค Arduino Door Lock:
+## Function of Arduino Door Lock:
 
     1. Present Password: รหัสสำหรับใช้ปลดล็อค (ไม่หายไปแม้แหล่งจ่ายไฟขาดไป เพราะข้อมูลถูกเก็บไว้ใน ROM) สามารถเปลี่ยนได้โดยการใช้ Factory Password
     2. Factory Password: รหัสสำหรับใช้เปลี่ยน Present Password ในกรณีลืมรหัสผ่าน หรือต้องการเปลี่ยนรหัสผ่าน โดย Factory Password สามารถเปลี่ยนได้โดยการแก้ใน Code เท่านั้น
